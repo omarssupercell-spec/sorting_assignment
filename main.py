@@ -29,6 +29,9 @@ def quick_sort(arr):
 
     return quick_sort(left) + [pivot] + quick_sort(right)
 
+def builtin_sort(arr):
+    return sorted(arr)
+
 #TESTING
 
 small = random.sample(range(1, 10_000), 100)
@@ -46,31 +49,36 @@ NUM_TRIALS = 5
 for label, number in sets:
 
 #bubble sort
-    total = 0
+    trials = [] #MIN, MAX. AVERAGE
     for _ in range(NUM_TRIALS):
         copy = number.copy()
         start = time.perf_counter()
         bubble_sort(copy)
         end = time.perf_counter()
-        total += end - start
-    avg = total / NUM_TRIALS
-    print(f"{'Bubble Sort':<20} {label:<25} {avg:.6f}")
+        trials.append(end - start)
+    print(f"{'Bubble Sort':<20} {label:<25} min: {min(trials):.6f} avg: {sum(trials)/NUM_TRIALS:.6f} max: {max(trials):.6f}")
 
 #quick sort
-    total = 0
+    trials = [] #MIN, MAX. AVERAGE
     for _ in range(NUM_TRIALS):
         copy = number.copy()
         start = time.perf_counter()
         quick_sort(copy)
         end = time.perf_counter()
-        total += end - start
-    avg = total / NUM_TRIALS
-    print(f"{'Quick Sort':<20} {label:<25} {avg:.6f}")
+        trials.append(end - start)
+    print(f"{'Quick Sort':<20} {label:<25} min: {min(trials):.6f} avg: {sum(trials)/NUM_TRIALS:.6f} max: {max(trials):.6f}")
+
+#built-in sort (Challenge A)
+    trials = [] #MIN, MAX. AVERAGE
+    for _ in range(NUM_TRIALS):
+        copy = number.copy()
+        start = time.perf_counter()
+        builtin_sort(copy)
+        end = time.perf_counter()
+        trials.append(end - start)
+    print(f"{'Built-in Sort':<20} {label:<25} min: {min(trials):.6f} avg: {sum(trials)/NUM_TRIALS:.6f} max: {max(trials):.6f}")
 
     print("-" * 55)
-
-
-
 
 # GRAPH CODE (AI HELP FOR THE ACTUAL GRAPH AND PNG)
 
@@ -78,8 +86,9 @@ sizes = [100, 250, 500, 750, 1000, 1500, 2000, 2500, 3000, 4000, 5000]
 
 bubble_times = []
 quick_times = []
+builtin_times = []
 
-print("\nRunning graph tets...")
+print("\nRunning graph tests...")
 
 for size in sizes:
     data = random.sample(range(1, 1_000_000), size)
@@ -104,14 +113,25 @@ for size in sizes:
         total += end - start
     quick_times.append(total / NUM_TRIALS)
 
+    #built in sorting
+    total = 0
+    for _ in range(NUM_TRIALS):
+        copy = data.copy()
+        start = time.perf_counter()
+        builtin_sort(copy)
+        end = time.perf_counter()
+        total += end - start
+    builtin_times.append(total / NUM_TRIALS)
+
     print (f"Done: {size} elements")
 
 #plot results on graph( AI HELP)
 plt.figure(figsize=(10, 6))
 plt.plot(sizes, bubble_times, marker='o', label='Bubble Sort', color='red')
 plt.plot(sizes, quick_times, marker='o', label='Quick Sort', color='blue')
+plt.plot(sizes, builtin_times, marker='o', label= 'Built-in Sorted()', color="green")
 
-plt.title("Bubble Sort vs Quick Sort - Time Complexity")
+plt.title("Bubble Sort vs Quick Sort vs Built-in sorted() - Time Complexity")
 plt.xlabel("Dataset size (elements)")
 plt.ylabel("Average Time (seconds)")
 plt.legend()
